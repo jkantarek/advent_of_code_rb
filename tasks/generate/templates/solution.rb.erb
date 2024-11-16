@@ -1,0 +1,24 @@
+module AdventOfCodeRb
+  module Y<%= year_number %>
+    module D<%= day_number %>
+      class Solution
+        class << self
+
+          def parse_file
+            @parsed_file = File.open(File.expand_path("input.txt", __dir__)) do |file|
+              binding.irb
+            end
+          end
+
+          def part1
+            data = parse_file
+          end
+
+          def part2
+            false
+          end
+        end
+      end
+    end
+  end
+end

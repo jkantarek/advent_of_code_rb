@@ -10,7 +10,7 @@ This is not a gem to be installed anywhere, good luck if you try to!
 
 ## Usage
 
-day specific rake tasks to come in the future
+use `rake generate:new_day` to create a new file harness and test for the day. This will automatically scan the folders for the correct next day to create using sequential order.
 
 ## Development
 
