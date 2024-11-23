@@ -2,13 +2,19 @@
 
 namespace :generate do
   desc "Generate a new day scaffold"
-  task :new_day, [:year_number, :day_number] do |_t, args|
+  task :new_day, [:year_number, :day_number, :disable_git] do |_t, args|
     require_relative "../helpers"
 
     context = Tasks::Helpers.extract_year_and_day(**args)
     year_number = context.fetch(:year_number)
     day_number = context.fetch(:day_number)
     base_dir = "lib/advent_of_code_rb/y_#{year_number}/d_#{day_number}"
+
+    unless args[:disable_git] == "true"
+      `git checkout main`
+      `git pull --rebase --autostash`
+      `git checkout -b #{year_number}/#{day_number}-question`
+    end
 
     Tasks::Helpers.ensure_files_exist(**context)
     Tasks::Helpers.append_modules(**context)
