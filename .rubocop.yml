@@ -16,3 +16,7 @@ Style/StringLiteralsInInterpolation:
 
 Style/Documentation:
   Enabled: false
+
+# Style/ClassAndModuleChildren disable only for test files
+Style/ClassAndModuleChildren:
+  AllowConsecutiveConditionals: true

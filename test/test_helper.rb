@@ -7,4 +7,8 @@ Dir.glob("lib/advent_of_code_rb/y_*/*/*.rb").each do |file|
   require file
 end
 
+Dir.glob("test/advent_of_code_rb/y_*/*/*.rb").each do |file|
+  require file
+end
+
 require "minitest/autorun"
