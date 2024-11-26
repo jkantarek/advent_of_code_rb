@@ -36,7 +36,7 @@ module Tasks
         File.open("lib/advent_of_code_rb.rb", "r+") do |file|
           next if file.read.match?("module AdventOfCodeRb::Y#{year_number}; end")
 
-          file.puts("\nmodule AdventOfCodeRb::Y2024; end")
+          file.puts("\nmodule AdventOfCodeRb::Y#{year_number}; end")
         end
 
         FileUtils.touch("lib/advent_of_code_rb/y_#{year_number}/y_#{year_number}.rb")
