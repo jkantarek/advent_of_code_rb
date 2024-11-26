@@ -15,8 +15,13 @@ module Tasks
 
         {
           year_number: year_number,
-          day_number: day_num
+          day_number: Integer(day_num).to_s.rjust(2, "0")
         }
+      end
+
+      def setup_git(year_number:, day_number:)
+        `git pull --rebase --autostash`
+        `git checkout -b "y_#{year_number}/d_#{day_number}"`
       end
 
       def ensure_files_exist(year_number:, day_number:)
