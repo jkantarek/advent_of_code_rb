@@ -48,6 +48,19 @@ module Tasks
         end
       end
 
+      def create_files(base_dir:, test_dir:, **context)
+        [
+          ["#{base_dir}/solution.rb", "solution.rb.erb"],
+          ["#{test_dir}/solution_test.rb", "solution_test.rb.erb"],
+          ["#{base_dir}/input.txt", "input.txt.erb"],
+          ["#{base_dir}/test_input.txt", "input.txt.erb"]
+        ].each do |file_path, erb_path|
+          Tasks::Helpers.create_file \
+            file_path,
+            Tasks::Helpers.render_template("tasks/generate/templates/#{erb_path}", context)
+        end
+      end
+
       def render_template(template_path, context)
         template = File.read(template_path)
         ERB.new(template).result_with_hash(context)

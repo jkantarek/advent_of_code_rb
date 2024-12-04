@@ -4,18 +4,38 @@ module AdventOfCodeRb
       class Solution
         class << self
 
-          def parse_file
-            @parsed_file = File.open(File.expand_path("input.txt", __dir__)) do |file|
+          def parse_file(filename: "input.txt")
+            @parsed_file = File.open(File.expand_path(filename, __dir__)) do |file|
               binding.irb
             end
           end
 
+          def solution(result)
+            binding.irb
+          end
+
+          def test_case
+            result = parse_file(filename: "test_input.txt")
+            solution(result)
+          end
+
           def part1
-            data = parse_file
+            result = parse_file
+            solution(result)
+          end
+
+          def solution_part2(result)
+            binding.irb
+          end
+
+          def part2_test_case
+            result = parse_file(filename: "test_input.txt")
+            solution_part2(result)
           end
 
           def part2
-            false
+            result = parse_file
+            solution_part2(result)
           end
         end
       end

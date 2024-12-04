@@ -16,3 +16,10 @@ Style/StringLiteralsInInterpolation:
 
 Style/Documentation:
   Enabled: false
+
+Style/ClassAndModuleChildren:
+  Enabled: false
+  Include:
+    - "**/*_test.rb"
+    - "**/advent_of_code_rb.rb"
+    - "**/y_*.rb"

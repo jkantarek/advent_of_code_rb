@@ -1,15 +1,23 @@
 require 'minitest/autorun'
 
-class Day#{day_number}Test < Minitest::Test
+class AdventOfCodeRb::Y<%= year_number %>::D<%= day_number %>Test < Minitest::Test
   def setup
-    @described_class = AdventOfCodeRb::Y#{year_number}::D#{day_number}::Solution
+    @described_class = AdventOfCodeRb::Y<%= year_number %>::D<%= day_number %>::Solution
+  end
+
+  def test_test_case_passes
+    assert_equal 0, @described_class.test_case
   end
 
   def test_part_1_passes
-    assert @described_class.part1
+    assert_equal 0, @described_class.part1
+  end
+
+  def test_part_2_example_passes
+    assert_equal 0, @described_class.part2_test_case
   end
 
   def test_part_2_passes
-    assert @described_class.part2
+    assert_equal 0, @described_class.part2
   end
 end
