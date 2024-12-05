@@ -17,22 +17,23 @@ module AdventOfCodeRb
             compute(result).select { |a| a[:status] == :safe }.count
           end
 
+          def process_line(line)
+            status = :safe
+            direction = :unknown
+            reason = nil
+            line.each_with_index do |value, index|
+              next if status == :unsafe
+
+              this_direction = detect_direction(direction, value, line[index - 1], index)
+              status, reason = detect_status(status, direction, this_direction, value, line[index - 1])
+              direction = this_direction
+            end
+            { status:, line:, reason:, direction: }
+          end
+
           def compute(result)
             result.map do |line|
-              status = :safe
-              direction = :unknown
-              reason = nil
-              last_index = 0
-              line.each_with_index do |value, index|
-                next if status == :unsafe
-
-                last_index = index
-
-                this_direction = detect_direction(direction, value, line[index - 1], index)
-                status, reason = detect_status(status, direction, this_direction, value, line[index - 1])
-                direction = this_direction
-              end
-              { status:, line:, reason:, direction:, last_index: last_index }
+              process_line(line)
             end
           end
 
@@ -54,9 +55,7 @@ module AdventOfCodeRb
               line[:line].each_with_index do |_, index|
                 next if fix_found
 
-                line_copy = line[:line].dup
-                line_copy.delete_at(index)
-                fix_found = true if compute([line_copy]).any? { |a| a[:status] == :safe }
+                fix_found = true if compute([get_line_copy(line[:line], index)]).any? { |a| a[:status] == :safe }
               end
               fix_found
             end.count
@@ -74,18 +73,69 @@ module AdventOfCodeRb
 
           private
 
+          def get_line_copy(line, index)
+            line_copy = line.dup
+            line_copy.delete_at(index)
+            line_copy
+          end
+
+          module StatusCheck
+            RULES =
+              [
+                {
+                  key: :already_unsafe,
+                  new_status: :unsafe,
+                  message: "already unsafe",
+                  condition: ->(status, _, _, _, _) { status == :unsafe }
+                },
+                {
+                  key: :no_change_in_value,
+                  new_status: :unsafe,
+                  message: "no change in value",
+                  condition: lambda { |_, direction, this_direction, current_value, last_value|
+                    current_value == last_value && direction == :unknown && this_direction == :unknown
+                  }
+                },
+                {
+                  key: :unknown_direction,
+                  new_status: nil,
+                  message: "unknown direction",
+                  condition: lambda { |_, direction, this_direction, _, _|
+                    direction == :unknown && this_direction == :unknown
+                  }
+                },
+                {
+                  key: :direction_mismatch,
+                  new_status: :unsafe,
+                  message: "direction mismatch",
+                  condition: lambda { |_, direction, this_direction, _, _|
+                    %i[ascending descending].include?(direction) && this_direction != direction
+                  }
+                },
+                {
+                  key: :no_change_in_value,
+                  new_status: :unsafe,
+                  message: "no change in value",
+                  condition: lambda { |_, _, _, current_value, last_value|
+                    current_value == last_value
+                  }
+                },
+                {
+                  key: :value_change_too_large,
+                  new_status: :unsafe,
+                  message: "value change too large",
+                  condition: lambda { |_, _, _, current_value, last_value|
+                    (current_value - last_value).abs > 3
+                  }
+                }
+              ].freeze
+          end
+
           def detect_status(status, direction, this_direction, current_value, last_value)
-            return [:unsafe, "already unsafe"] if status == :unsafe
-
-            if current_value == last_value && direction == :unknown && this_direction == :unknown
-              return [:unsafe, "no change in value"]
+            match = StatusCheck::RULES.find do |rule|
+              rule[:condition].call(status, direction, this_direction, current_value, last_value)
             end
-            return [status, "unknown direction"] if direction == :unknown && this_direction == :unknown
-            return [:unsafe, "direction mismatch"] if %i[ascending
-                                                         descending].include?(direction) && this_direction != direction
-
-            return [:unsafe, "no change in value"] if current_value == last_value
-            return [:unsafe, "value change too large"] if (current_value - last_value).abs > 3
+            return [match[:new_status] || status, match[:message]] if match
 
             [:safe, "All good"]
           end
