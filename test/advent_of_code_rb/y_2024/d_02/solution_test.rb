@@ -20,6 +20,6 @@ class AdventOfCodeRb::Y2024::D02::SolutionTest < Minitest::Test
   end
 
   def test_part_2_passes
-    assert_equal 0, @described_class.part2
+    assert_equal 674, @described_class.part2
   end
 end

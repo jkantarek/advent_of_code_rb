@@ -14,7 +14,11 @@ module AdventOfCodeRb
           end
 
           def solution(result)
-            answer = result.map do |line|
+            compute(result).select { |a| a[:status] == :safe }.count
+          end
+
+          def compute(result)
+            result.map do |line|
               status = :safe
               direction = :unknown
               reason = nil
@@ -30,7 +34,6 @@ module AdventOfCodeRb
               end
               { status:, line:, reason:, direction:, last_index: last_index }
             end
-            answer.select { |a| a[:status] == :safe }.count
           end
 
           def test_case
@@ -44,8 +47,19 @@ module AdventOfCodeRb
           end
 
           def solution_part2(result)
-            # binding.irb
-            0
+            compute(result).select do |line|
+              next true if line[:status] == :safe
+
+              fix_found = false
+              line[:line].each_with_index do |_, index|
+                next if fix_found
+
+                line_copy = line[:line].dup
+                line_copy.delete_at(index)
+                fix_found = true if compute([line_copy]).any? { |a| a[:status] == :safe }
+              end
+              fix_found
+            end.count
           end
 
           def part2_test_case
