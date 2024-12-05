@@ -16,10 +16,10 @@ class AdventOfCodeRb::Y2024::D03Test < Minitest::Test
   end
 
   def test_part_2_example_passes
-    assert_equal 0, @described_class.part2_test_case
+    assert_equal 48, @described_class.part2_test_case
   end
 
   def test_part_2_passes
-    assert_equal 0, @described_class.part2
+    assert_equal 93_465_710, @described_class.part2
   end
 end
