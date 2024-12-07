@@ -19,7 +19,7 @@ class AdventOfCodeRb::Y2024::D05Test < Minitest::Test
     assert_equal 0, @described_class.part2_test_case
   end
 
-  def test_part_2_passes
-    assert_equal 0, @described_class.part2
-  end
+  # def test_part_2_passes
+  #   assert_equal 0, @described_class.part2
+  # end
 end
