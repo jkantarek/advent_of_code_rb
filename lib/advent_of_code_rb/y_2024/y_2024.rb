@@ -11,3 +11,5 @@ module AdventOfCodeRb::Y2024::D04; end
 module AdventOfCodeRb::Y2024::D06; end
 
 module AdventOfCodeRb::Y2024::D07; end
+
+module AdventOfCodeRb::Y2024::D08; end
