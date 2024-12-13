@@ -5,7 +5,8 @@ module AdventOfCodeRb
     module D07
       class Solution
         class Operation
-          attr_reader :expected_result, :values, :allowed_operands, :math_string
+          attr_reader :expected_result, :values, :allowed_operands, :math_string, :math_strings
+          attr_accessor :concat_found
 
           def initialize(expected_result, values, allowed_operands: ["+", "*"])
             @expected_result = expected_result
@@ -20,8 +21,8 @@ module AdventOfCodeRb
               if first_tuple == math_string
                 eval("#{expected_result} == (#{math_string})")
               else
-                remainder = math_string[first_tuple.length..-1]
-                res = remainder.scan(/\W\d+/).reduce(eval(first_tuple).to_i) do |acc, str|
+                remainder = math_string[first_tuple.length..]
+                res = remainder.scan(/\W\d+/).reduce(eval(first_tuple)) do |acc, str|
                   eval("#{acc}#{str}")
                 end
                 expected_result == res
@@ -42,8 +43,71 @@ module AdventOfCodeRb
             end
           end
 
+          def find_with_concat
+            operators = %i[+ * |]
+            operators.repeated_permutation(values.count - 1).any? do |ops|
+              return true if calculate_iteration(ops)
+            end
+            false
+          end
+
+          def calculate_iteration(ops)
+            v = ops.zip(values[1..]).flatten.each_slice(2).reduce(values.first) do |acc, (op, val)|
+              return false if acc > expected_result
+
+              if op == :|
+                "#{acc}#{val}".to_i
+              else
+                acc.send(op, val)
+              end
+            end
+            true if v == expected_result
+          end
+
+          def find_with_one_concat
+            values_count = values.count
+            if values_count == 2
+              values.join.to_i == expected_result
+            else
+              math_strings.any? do |math_string|
+                string_matcher(math_string) == true
+              end
+            end
+          end
+
           def result
             @values.sum
+          end
+
+          private
+
+          def string_matcher(math_string)
+            operators = math_string.scan(/\W/)
+            operators.each_with_index do |operator, index|
+              v1, v2, *rest = values.dup
+              res = if index.zero?
+                      operators[1..].reduce([v1, v2].join.to_i) do |acc, operator|
+                        acc.send(operator.to_sym, rest.shift)
+                      end
+                    else
+                      line_idx = 1
+                      operators[1..].reduce(v1.send(operator[0].to_sym, v2)) do |acc, operator|
+                        if line_idx == index
+                          line_idx += 1
+                          [acc, rest.shift].join.to_i
+                        else
+                          line_idx += 1
+                          acc.send(operator.to_sym, rest.shift)
+                        end
+                      end
+                    end
+              next unless res == expected_result
+
+              @concat_found = {
+                found_index: index
+              }
+              return true
+            end
           end
         end
 
@@ -74,7 +138,9 @@ module AdventOfCodeRb
           end
 
           def solution_part2(result)
-            binding.irb
+            # found_operations, remaining_operations = result.partition(&:find_matching_expressions)
+            new_finds, _still_wrong = result.partition(&:find_with_concat)
+            new_finds.sum(&:expected_result)
           end
 
           def part2_test_case
