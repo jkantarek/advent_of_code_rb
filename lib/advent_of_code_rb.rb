@@ -8,3 +8,5 @@ module AdventOfCodeRb
 end
 
 module AdventOfCodeRb::Y2024; end
+
+module AdventOfCodeRb::Y2025; end

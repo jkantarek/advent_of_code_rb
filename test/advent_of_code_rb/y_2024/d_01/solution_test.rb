@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-require "minitest/autorun"
+require "test_helper"
 
 class AdventOfCodeRb::Y2024::D01Test < Minitest::Test
   def setup
